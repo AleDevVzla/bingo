@@ -83,6 +83,19 @@ Procedimiento GenerarCarton(carton)
     FinPara
 FinProcedimiento
 
+Procedimiento MostrarCarton(carton, marcado)
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+            Si carton[i,j] = -1 O marcado[i,j] Entonces
+                Escribir "|--|"
+            Sino
+                Escribir "|", carton[i,j], "|"
+            FinSi
+        FinPara
+        Escribir "\n"
+    FinPara
+FinProcedimiento
+
 Funcion SacarBola()
     Variables:
         bola, i: Entero
@@ -197,7 +210,99 @@ Funcion RevisarBingo(marcado)
     Devolver Verdadero
 FinFuncion
 
+Procedimiento InicializarJuego()
+    Variables:
+        i, j, k, l: Entero
+    Ganador <- -1
+    
+    Para i <- 1 Hasta NUM_JUGADORES Con Paso 1 Hacer
+        CARTONES_POR_JUGADOR[i] <- LeerNumero("Ingrese el número de cartones para el jugador " + i + ": ")
+    FinPara
+    
+    Redimensionar Cartones a NUM_JUGADORES
+    Redimensionar MarcadosAux a NUM_JUGADORES
+    Redimensionar Marcados a NUM_JUGADORES
+
+  
+    Para i <- 1 to Longitud(Cartones) Con Paso 1 Hacer
+        Redimensionar Cartones[i] a CARTONES_POR_JUGADOR[i]
+        Redimensionar MarcadosAux[i] a CARTONES_POR_JUGADOR[i]
+        Redimensionar Marcados[i] a CARTONES_POR_JUGADOR[i]
+    FinPara
+
+    
+    Para i <- 1 Hasta NUM_BOLAS Con Paso 1 Hacer
+        BolasExtraidas[i] <- -1
+    FinPara
+    
+    Para i <- 1 Hasta NUM_JUGADORES Con Paso 1 Hacer
+        Para j <- 1 Hasta CARTONES_POR_JUGADOR[i] Con Paso 1 Hacer
+            GenerarCarton(Cartones[i,j])
+            Para k <- 1 Hasta FILAS Con Paso 1 Hacer
+                Para l <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+                    Si k = 3 Y l = 3 Entonces
+                        MarcadosAux[i,j,k,l] <- Falso
+                        Marcados[i,j,k,l] <- Verdadero
+                    Sino
+                        MarcadosAux[i,j,k,l] <- Falso
+                        Marcados[i,j,k,l] <- Falso
+                    FinSi
+                FinPara
+            FinPara
+        FinPara
+    FinPara
+FinProcedimiento
+
+Procedimiento Jugar()
+    Variables:
+        bola, lineas: Entero
+        i, j: Entero
+    Repetir
+        Limpiar Pantalla
+        Escribir "===== Bingo ====="
+        Escribir ""
+        
+        Para i <- 1 Hasta NUM_JUGADORES Con Paso 1 Hacer
+            Escribir "Cartones del Jugador ", i, ":"
+            Para j <- 1 Hasta CARTONES_POR_JUGADOR[i] Con Paso 1 Hacer
+                MostrarCarton(Cartones[i,j], Marcados[i,j])
+                Escribir ""
+            FinPara
+        FinPara
+        
+        Si Ganador <> -1 Entonces
+            Romper
+        FinSi
+        
+        bola <- SacarBola()
+        Escribir "Bola número: ", bola
+        Escribir ""
+        
+        Para i <- 1 Hasta NUM_JUGADORES Con Paso 1 Hacer
+            Para j <- 1 Hasta CARTONES_POR_JUGADOR[i] Con Paso 1 Hacer
+                MarcarNumero(Cartones[i,j], Marcados[i,j], MarcadosAux[i,j], bola)
+                Si RevisarBingo(Marcados[i,j]) Entonces
+                    Ganador <- i
+                    Escribir "Jugador ", i, " ha llenado el cartón ", j, ". ¡Bingo!"
+                    Romper
+                FinSi
+                lineas <- RevisarLinea(MarcadosAux[i,j], Marcados[i,j])
+                Si lineas > 0 Entonces
+                    Escribir "Jugador ", i, " ha llenado ", lineas, " líneas en el cartón ", j
+                FinSi
+            FinPara
+        FinPara
+        
+        Escribir "Presione cualquier tecla para continuar..."
+        Esperar Tecla
+    Hasta Que Falso
+    
+    Escribir "El ganador es el Jugador ", Ganador, "... ¡Felicidades!"
+FinProcedimiento
+
 Inicio
     NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")
     Redimensionar CARTONES_POR_JUGADOR a NUM_JUGADORES
+    InicializarJuego()
+    Jugar()
 Fin

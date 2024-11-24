@@ -107,6 +107,23 @@ begin
   end;
 end;
 
+procedure MostrarCarton(carton: TCarton; marcado: TMarcado);
+var
+  i, j: integer;
+begin
+  for i := 1 to FILAS do
+  begin
+    for j := 1 to COLUMNAS do
+    begin
+      if (carton[i][j] = -1) or marcado[i][j] then
+        Write('|--|')
+      else
+        Write(Format('|%2d|', [carton[i][j]]));
+    end;
+    Writeln;
+  end;
+end;
+
 function SacarBola(): integer;
 var
   bola, i: integer;
@@ -236,8 +253,94 @@ begin
   RevisarBingo := hayBingo;
 end;
 
+procedure InicializarJuego();
+var 
+  i, j, k, l: integer;
+begin
+  Ganador := -1;
+  
+  for i := Low(CARTONES_POR_JUGADOR) to High(CARTONES_POR_JUGADOR) do
+    CARTONES_POR_JUGADOR[i] := LeerNumero(Format('Ingrese el número de cartones para el jugador %d: ', [i + 1]));
+
+  SetLength(Cartones, NUM_JUGADORES);
+  SetLength(MarcadosAux, NUM_JUGADORES);
+  SetLength(Marcados, NUM_JUGADORES);
+  
+  for i := Low(Cartones) to High(Cartones) do begin
+    SetLength(Cartones[i], CARTONES_POR_JUGADOR[i]);
+    SetLength(MarcadosAux[i], CARTONES_POR_JUGADOR[i]);
+    SetLength(Marcados[i], CARTONES_POR_JUGADOR[i]);
+  end;
+
+  Randomize;
+  
+  for i := Low(BolasExtraidas) to High(BolasExtraidas) do 
+    BolasExtraidas[i] := -1;
+    
+  for i := 0 to NUM_JUGADORES-1 do 
+    for j := 0 to CARTONES_POR_JUGADOR[i]-1 do begin
+      GenerarCarton(Cartones[i][j]);
+      for k := 1 to FILAS do 
+        for l := 1 to COLUMNAS do begin
+          if (k = 3) and (l = 3) then begin
+            MarcadosAux[i][j][k,l] := False;
+            Marcados[i][j][k,l] := True;
+          end else begin
+            MarcadosAux[i][j][k,l] := False;
+            Marcados[i][j][k,l] := False;
+          end;
+        end;
+    end;
+end;
+
+procedure Jugar();
+var 
+  bola, i, j, lineas: integer;
+begin
+  repeat
+    ClrScr;
+    Writeln('===== Bingo =====');
+    Writeln;
+    
+    for i := 0 to NUM_JUGADORES-1 do begin
+      Writeln('Cartones del Jugador ', i+1, ':');
+      for j := 0 to CARTONES_POR_JUGADOR[i]-1 do begin
+        MostrarCarton(Cartones[i][j], Marcados[i][j]);
+        Writeln;
+      end;
+    end;
+    
+    if Ganador <> -1 then Break;
+    
+    bola := SacarBola();
+    Writeln('Bola numero: ', bola);
+    Writeln;
+    
+    for i := 0 to NUM_JUGADORES-1 do begin
+      for j := 0 to CARTONES_POR_JUGADOR[i]-1 do begin
+        MarcarNumero(Cartones[i][j], Marcados[i][j], MarcadosAux[i][j], bola);
+        if RevisarBingo(Marcados[i][j]) then begin
+          Ganador := i+1;
+          Writeln('Jugador ', i+1, ' ha llenado el carton ', j+1, '. Bingo!');
+          Break;
+        end;
+        lineas := RevisarLinea(MarcadosAux[i][j], Marcados[i][j]);
+        if (lineas > 0) then 
+          Writeln('Jugador ', i+1, ' ha llenado ', lineas,' lineas en el carton ', j+1);
+      end;
+    end;
+    
+    Writeln('Presione cualquier tecla para continuar...');
+    ReadKey;
+  until False;
+  
+  Writeln('El ganador es el Jugador ', Ganador, '... Felicidades!.');
+end;
+
 // ejecución del programa
 begin
   NUM_JUGADORES := LeerNumero('Ingrese el número de jugadores: ');
   SetLength(CARTONES_POR_JUGADOR, NUM_JUGADORES);
+  InicializarJuego();
+  Jugar();
 end.
