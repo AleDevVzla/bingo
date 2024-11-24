@@ -1,0 +1,22 @@
+Algoritmo Bingo
+
+Constante NUM_BOLAS <- 75
+Constante FILAS <- 5
+Constante COLUMNAS <- 5
+
+Tipo TLinea <- Arreglo[1..FILAS] de Entero
+Tipo TCarton <- Arreglo[1..FILAS, 1..COLUMNAS] de Entero
+Tipo TMarcado <- Arreglo[1..FILAS, 1..COLUMNAS] de Logico
+
+Definir NUM_JUGADORES: Entero
+Definir CARTONES_POR_JUGADOR: Arreglo Dinámico de Entero
+Definir Cartones: Arreglo Dinámico de Arreglo Dinámico de TCarton
+Definir MarcadosAux: Arreglo Dinámico de Arreglo Dinámico de TMarcado
+Definir Marcados: Arreglo Dinámico de Arreglo Dinámico de TMarcado
+Definir BolasExtraidas: Arreglo[1..NUM_BOLAS] de Entero
+Definir Ganador: Entero
+
+Inicio
+    NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")
+    Dimension CARTONES_POR_JUGADOR[NUM_JUGADORES]
+Fin
