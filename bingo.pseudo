@@ -74,6 +74,28 @@ Procedimiento GenerarCarton(carton)
     FinPara
 FinProcedimiento
 
+Funcion SacarBola()
+    bola <- GenerarNumeroUnico(BolasExtraidas, 1, NUM_BOLAS)
+    Para i <- 1 Hasta NUM_BOLAS Con Paso 1 Hacer
+        Si BolasExtraidas[i] = -1 Entonces
+            BolasExtraidas[i] <- bola
+            Romper
+        FinSi
+    FinPara
+    Devolver bola
+FinFuncion
+
+Procedimiento MarcarNumero(carton, marcado, marcadoAux, bola)
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+            Si carton[i,j] = bola Entonces
+                marcadoAux[i,j] <- Verdadero
+                marcado[i,j] <- Verdadero
+            FinSi
+        FinPara
+    FinPara
+FinProcedimiento
+
 Inicio
     NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")
     Redimensionar CARTONES_POR_JUGADOR a NUM_JUGADORES

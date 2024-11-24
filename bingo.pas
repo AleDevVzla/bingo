@@ -107,6 +107,33 @@ begin
   end;
 end;
 
+function SacarBola(): integer;
+var
+  bola, i: integer;
+begin
+  bola := GenerarNumeroUnico(BolasExtraidas, 1, NUM_BOLAS);
+  for i := Low(BolasExtraidas) to High(BolasExtraidas) do
+    if (BolasExtraidas[i] = -1) then
+    begin
+      BolasExtraidas[i] := bola;
+      Break;
+    end;
+  SacarBola := bola;
+end;
+
+procedure MarcarNumero(var carton: TCarton; var marcado: TMarcado; var marcadoAux: TMarcado; bola: integer);
+var
+  i, j: integer;
+begin
+  for i := 1 to FILAS do
+    for j := 1 to COLUMNAS do
+      if carton[i][j] = bola then
+      begin
+        marcadoAux[i][j] := True;
+        marcado[i][j] := True;
+      end;
+end;
+
 // ejecución del programa
 begin
   NUM_JUGADORES := LeerNumero('Ingrese el número de jugadores: ');
