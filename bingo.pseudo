@@ -39,9 +39,40 @@ Funcion ExisteEnArreglo(arreglo, valor)
     Devolver Falso
 FinFuncion
 
-Funcion GenerarNumeroAleatorio(min, max)
-    Devolver Aleatorio(min, max)
+Funcion GenerarNumeroUnico(arreglo, min, max)
+    Repetir
+        num <- Aleatorio(min, max)
+    Hasta Que no ExisteEnArreglo(arreglo, num)
+    Devolver num
 FinFuncion
+
+Funcion GenerarLinea(numeroDeLinea)
+    Variables:
+        linea: Arreglo[FILAS]
+
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        linea[i] <- -1
+    FinPara
+
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        linea[i] <- GenerarNumeroUnico(linea, (numeroDeLinea - 1) * 15 + 1, numeroDeLinea * 15)
+    FinPara
+
+    Devolver linea
+FinFuncion
+
+Procedimiento GenerarCarton(carton)
+    Para i <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+        linea <- GenerarLinea(i)
+        Para j <- 1 Hasta FILAS Con Paso 1 Hacer
+            Si no (i = 3 Y j = 3) Entonces
+                carton[j,i] <- linea[j]
+            Sino
+                carton[j,i] <- -1
+            FinSi
+        FinPara
+    FinPara
+FinProcedimiento
 
 Inicio
     NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")
