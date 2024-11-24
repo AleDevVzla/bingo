@@ -31,6 +31,9 @@ Funcion LeerNumero(mensaje)
 FinFuncion
 
 Funcion ExisteEnArreglo(arreglo, valor)
+    Variables:
+        existe: Logico
+        i: Entero
     Para i <- 1 Hasta Longitud(arreglo) Con Paso 1 Hacer
         Si arreglo[i] = valor Entonces
             Devolver Verdadero
@@ -40,6 +43,8 @@ Funcion ExisteEnArreglo(arreglo, valor)
 FinFuncion
 
 Funcion GenerarNumeroUnico(arreglo, min, max)
+    Variables:
+        num: Entero
     Repetir
         num <- Aleatorio(min, max)
     Hasta Que no ExisteEnArreglo(arreglo, num)
@@ -49,6 +54,7 @@ FinFuncion
 Funcion GenerarLinea(numeroDeLinea)
     Variables:
         linea: Arreglo[FILAS]
+        i: Entero
 
     Para i <- 1 Hasta FILAS Con Paso 1 Hacer
         linea[i] <- -1
@@ -62,6 +68,9 @@ Funcion GenerarLinea(numeroDeLinea)
 FinFuncion
 
 Procedimiento GenerarCarton(carton)
+    Variables:
+        linea: TLinea
+        i, j: Entero
     Para i <- 1 Hasta COLUMNAS Con Paso 1 Hacer
         linea <- GenerarLinea(i)
         Para j <- 1 Hasta FILAS Con Paso 1 Hacer
@@ -75,6 +84,8 @@ Procedimiento GenerarCarton(carton)
 FinProcedimiento
 
 Funcion SacarBola()
+    Variables:
+        bola, i: Entero
     bola <- GenerarNumeroUnico(BolasExtraidas, 1, NUM_BOLAS)
     Para i <- 1 Hasta NUM_BOLAS Con Paso 1 Hacer
         Si BolasExtraidas[i] = -1 Entonces
@@ -86,6 +97,8 @@ Funcion SacarBola()
 FinFuncion
 
 Procedimiento MarcarNumero(carton, marcado, marcadoAux, bola)
+    Variables:
+        i, j: Entero
     Para i <- 1 Hasta FILAS Con Paso 1 Hacer
         Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
             Si carton[i,j] = bola Entonces
@@ -95,6 +108,94 @@ Procedimiento MarcarNumero(carton, marcado, marcadoAux, bola)
         FinPara
     FinPara
 FinProcedimiento
+
+Funcion RevisarLinea(marcadoAux, marcado)
+    Variables
+        i, j: Entero
+        contadorLineas: Entero
+        lineaProcesada: Logico
+    contadorLineas <- 0
+    
+    // Revisar filas
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        Si marcado[i,1] Y marcado[i,2] Y marcado[i,3] Y marcado[i,4] Y marcado[i,5] Entonces
+            lineaProcesada <- Verdadero
+            Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+                Si marcadoAux[i,j] Entonces
+                    lineaProcesada <- Falso
+                FinSi
+            FinPara
+            Si no lineaProcesada Entonces
+                contadorLineas <- contadorLineas + 1
+                Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+                    marcadoAux[i,j] <- Falso
+                FinPara
+            FinSi
+        FinSi
+    FinPara
+    
+    // Revisar columnas
+    Para i <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+        Si marcado[1,i] Y marcado[2,i] Y marcado[3,i] Y marcado[4,i] Y marcado[5,i] Entonces
+            lineaProcesada <- Verdadero
+            Para j <- 1 Hasta FILAS Con Paso 1 Hacer
+                Si marcadoAux[j,i] Entonces
+                    lineaProcesada <- Falso
+                FinSi
+            FinPara
+            Si no lineaProcesada Entonces
+                contadorLineas <- contadorLineas + 1
+                Para j <- 1 Hasta FILAS Con Paso 1 Hacer
+                    marcadoAux[j,i] <- Falso
+                FinPara
+            FinSi
+        FinSi
+    FinPara
+    
+    // Revisar diagonales
+    Si marcado[1,1] Y marcado[2,2] Y marcado[3,3] Y marcado[4,4] Y marcado[5,5] Entonces
+        lineaProcesada <- Verdadero
+        Si marcadoAux[1,1] O marcadoAux[2,2] O marcadoAux[3,3] O marcadoAux[4,4] O marcadoAux[5,5] Entonces
+            lineaProcesada <- Falso
+        FinSi
+        Si no lineaProcesada Entonces
+            contadorLineas <- contadorLineas + 1
+            marcadoAux[1,1] <- Falso
+            marcadoAux[2,2] <- Falso
+            marcadoAux[3,3] <- Falso
+            marcadoAux[4,4] <- Falso
+            marcadoAux[5,5] <- Falso
+        FinSi
+    FinSi
+    
+    Si marcado[5,1] Y marcado[4,2] Y marcado[3,3] Y marcado[2,4] Y marcado[1,5] Entonces
+        lineaProcesada <- Verdadero
+        Si marcadoAux[5,1] O marcadoAux[4,2] O marcadoAux[3,3] O marcadoAux[2,4] O marcadoAux[1,5] Entonces
+            lineaProcesada <- Falso
+        FinSi
+        Si no lineaProcesada Entonces
+            contadorLineas <- contadorLineas + 1
+            marcadoAux[5,1] <- Falso
+            marcadoAux[4,2] <- Falso
+            marcadoAux[3,3] <- Falso
+            marcadoAux[2,4] <- Falso
+            marcadoAux[1,5] <- Falso
+        FinSi
+    FinSi
+    
+    Devolver contadorLineas
+FinFuncion
+
+Funcion RevisarBingo(marcado)
+    Para i <- 1 Hasta FILAS Con Paso 1 Hacer
+        Para j <- 1 Hasta COLUMNAS Con Paso 1 Hacer
+            Si no marcado[i,j] Entonces
+                Devolver Falso
+            FinSi
+        FinPara
+    FinPara
+    Devolver Verdadero
+FinFuncion
 
 Inicio
     NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")

@@ -134,6 +134,108 @@ begin
       end;
 end;
 
+function RevisarLinea(var marcadoAux: TMarcado; const marcado: TMarcado): integer;
+var
+  i, j, contadorLineas: integer;
+  lineaProcesada: boolean;
+begin
+  contadorLineas := 0;
+
+  // Revisar filas
+  for i := 1 to FILAS do
+  begin
+    if (marcado[i][1]) and (marcado[i][2]) and (marcado[i][3]) and (marcado[i][4]) and (marcado[i][5]) then
+    begin
+      lineaProcesada := True;
+      for j := 1 to COLUMNAS do
+        if marcadoAux[i][j] then
+        begin
+          lineaProcesada := False;
+        end;
+
+      if not lineaProcesada then
+      begin
+        contadorLineas := contadorLineas + 1;
+        for j := 1 to COLUMNAS do
+          marcadoAux[i][j] := False;
+      end;
+    end;
+  end;
+
+  // Revisar columnas
+  for i := 1 to FILAS do
+  begin
+    if (marcado[1][i]) and (marcado[2][i]) and (marcado[3][i]) and (marcado[4][i]) and (marcado[5][i]) then
+    begin
+      lineaProcesada := True;
+      for j := 1 to COLUMNAS do
+        if marcadoAux[j][i] then
+        begin
+          lineaProcesada := False;
+        end;
+
+      if not lineaProcesada then
+      begin
+        contadorLineas := contadorLineas + 1;
+        for j := 1 to COLUMNAS do
+          marcadoAux[j][i] := False;
+      end;
+    end;
+  end;
+
+  // Revisar diagonal 1
+  if (marcado[1][1]) and (marcado[2][2]) and (marcado[3][3]) and (marcado[4][4]) and (marcado[5][5]) then
+  begin
+    lineaProcesada := True;
+    if marcadoAux[5][1] or marcadoAux[4][2] or marcadoAux[3][3] or marcadoAux[2][4] or marcadoAux[1][5] then
+      lineaProcesada := False;
+
+    if not lineaProcesada then
+    begin
+      contadorLineas := contadorLineas + 1;
+      marcadoAux[1][1] := False;
+      marcadoAux[2][2] := False;
+      marcadoAux[3][3] := False;
+      marcadoAux[4][4] := False;
+      marcadoAux[5][5] := False;
+    end;
+  end;
+
+  // Revisar diagonal 2
+  if (marcado[5][1]) and (marcado[4][2]) and (marcado[3][3]) and (marcado[2][4]) and (marcado[1][5]) then
+  begin
+    lineaProcesada := True;
+    if marcadoAux[5][1] or marcadoAux[4][2] or marcadoAux[3][3] or marcadoAux[2][4] or marcadoAux[1][5] then
+      lineaProcesada := False;
+
+    if not lineaProcesada then
+    begin
+      contadorLineas := contadorLineas + 1;
+      marcadoAux[5][1] := False;
+      marcadoAux[4][2] := False;
+      marcadoAux[3][3] := False;
+      marcadoAux[2][4] := False;
+      marcadoAux[1][5] := False;
+    end;
+  end;
+
+  RevisarLinea := contadorLineas;
+end;
+
+function RevisarBingo(marcado: TMarcado): boolean;
+var
+  i, j: integer;
+  hayBingo: boolean;
+begin
+  hayBingo := True;
+  for i := 1 to FILAS do
+    for j := 1 to COLUMNAS do
+      if not marcado[i][j] then 
+        hayBingo := False;
+    
+  RevisarBingo := hayBingo;
+end;
+
 // ejecución del programa
 begin
   NUM_JUGADORES := LeerNumero('Ingrese el número de jugadores: ');
