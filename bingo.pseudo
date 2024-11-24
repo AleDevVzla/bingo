@@ -16,7 +16,34 @@ Definir Marcados: Arreglo Dinámico de Arreglo Dinámico de TMarcado
 Definir BolasExtraidas: Arreglo[1..NUM_BOLAS] de Entero
 Definir Ganador: Entero
 
+Funcion LeerNumero(mensaje)
+    Variables:
+        numero: Entero
+        mensaje: Cadena
+    Repetir
+        Escribir mensaje
+        Leer numero
+        Si no Es_Numero(numero) Entonces
+            Escribir "Error: Debe ingresar un número válido"
+        FinSi
+    Hasta Que Es_Numero(numero)
+    Devolver ConvertirANumero(numero)
+FinFuncion
+
+Funcion ExisteEnArreglo(arreglo, valor)
+    Para i <- 1 Hasta Longitud(arreglo) Con Paso 1 Hacer
+        Si arreglo[i] = valor Entonces
+            Devolver Verdadero
+        FinSi
+    FinPara
+    Devolver Falso
+FinFuncion
+
+Funcion GenerarNumeroAleatorio(min, max)
+    Devolver Aleatorio(min, max)
+FinFuncion
+
 Inicio
     NUM_JUGADORES <- LeerNumero("Ingrese el número de jugadores: ")
-    Dimension CARTONES_POR_JUGADOR[NUM_JUGADORES]
+    Redimensionar CARTONES_POR_JUGADOR a NUM_JUGADORES
 Fin
